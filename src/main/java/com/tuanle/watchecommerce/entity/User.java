@@ -1,6 +1,7 @@
 package com.tuanle.watchecommerce.entity;
 
 
+import com.tuanle.watchecommerce.enums.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,7 +13,8 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public Long getId() {
         return id;
@@ -46,11 +48,7 @@ public class User {
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
-    }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

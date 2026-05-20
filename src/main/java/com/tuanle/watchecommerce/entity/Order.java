@@ -1,5 +1,6 @@
 package com.tuanle.watchecommerce.entity;
 
+import com.tuanle.watchecommerce.enums.OrderStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,6 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String status;
     private double total;
     private LocalDateTime createdAt;
     @ManyToOne
@@ -19,6 +19,8 @@ public class Order {
     private User user;
     @OneToMany(mappedBy = "order")
     private List<OrderItem> items;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     public Long getId() {
         return id;
@@ -28,13 +30,8 @@ public class Order {
         this.id = id;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
 
     public double getTotal() {
         return total;
