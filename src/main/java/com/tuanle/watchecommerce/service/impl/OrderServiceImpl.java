@@ -66,6 +66,7 @@ public class OrderServiceImpl implements OrderService {
         order.setCreatedAt(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
         order.setItems(orderItems);
+        order.setPaymentMethod(orderRequest.getPaymentMethod());
 
         // Pre-save order to obtain ID for order items
         Order savedOrder = orderRepository.save(order);

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Backend Implementation Notes</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --border: #334155;
+        }
+        body {
+            font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+        }
+        h2 {
+            color: var(--primary);
+            font-size: 1.75rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .note-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .note-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        .tag-decision {
+            background-color: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        .tag-tradeoff {
+            background-color: rgba(251, 191, 36, 0.15);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        .tag-change {
+            background-color: rgba(52, 211, 153, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        .title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .content {
+            font-size: 0.95rem;
+        }
+        pre {
+            background-color: #0b0f19;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+        code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: #0b0f19;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>E-Commerce Backend Implementation Notes</h1>
+        <div class="meta">Running log of engineering decisions, spec deviations, and architectural tradeoffs.</div>
+
+        <div id="notes-section">
+            <h2>1. Initial Setup</h2>
+            <div class="note-card">
+                <span class="tag tag-decision">Decision</span>
+                <div class="title">Constructor-based Dependency Injection</div>
+                <div class="content">
+                    Instead of using <code>@Autowired</code> on fields, we are utilizing constructor-based dependency injection across all service implementations. This is the modern, recommended pattern for Spring Boot as it enables immutability, cleaner unit testing, and clearer dependency tracking.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <span class="tag tag-change">Change / Fix</span>
+                <div class="title">Cart / Card Naming Alignment</div>
+                <div class="content">
+                    The specification mentions <code>CardResponse.java</code> and <code>CardItemResponse.java</code> under the DTO directory. These are typographical variants of <code>CartResponse</code> and <code>CartItemResponse</code>. To respect the existing codebase files without breaking the structural expectations, we will preserve the exact <code>CardResponse</code> and <code>CardItemResponse</code> class names in the mapper and controller layer, while correctly associating them with the <code>Cart</code> and <code>CartItem</code> database entities.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <span class="tag tag-decision">Decision</span>
+                <div class="title">Automatic Cart Initialization on Registration</div>
+                <div class="content">
+                    When a new user registers through <code>AuthService.register</code>, we proactively instantiate and persist an empty <code>Cart</code> entity linked to their account. This safeguards the system against null pointer exceptions and ensures a seamless experience when they interact with the shopping cart API endpoints immediately after signing up.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <span class="tag tag-decision">Decision</span>
+                <div class="title">Password Protection and BCrypt Hashing</div>
+                <div class="content">
+                    All user passwords are automatically hashed using <code>BCryptPasswordEncoder</code> prior to database persistence. This is implemented in both <code>AuthServiceImpl.register</code> and <code>UserServiceImpl.updateUser</code> to ensure security compliance.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <span class="tag tag-decision">Decision</span>
+                <div class="title">Atomic Stock Reservation on Checkout</div>
+                <div class="content">
+                    During the order creation process (checkout), we validate that every selected product has enough stock. If stock is available, we atomically decrement it before saving the order. If any item fails validation, the entire transaction is rolled back.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <span class="tag tag-decision">Decision</span>
+                <div class="title">Automatic Inventory Restoration on Cancellation</div>
+                <div class="content">
+                    When an order is cancelled via <code>OrderService.cancelOrder</code>, we automatically restore the exact quantities of all ordered items back to the product catalog, helping maintain accurate inventory counts.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -10,15 +10,17 @@ public class OrderResponse {
     private LocalDateTime createdAt;
     private OrderStatus status;
     private List<OrderItemResponse> items;
+    private String paymentMethod;
 
     public OrderResponse() {}
 
-    public OrderResponse(Long id, double total, LocalDateTime createdAt, OrderStatus status, List<OrderItemResponse> items) {
+    public OrderResponse(Long id, double total, LocalDateTime createdAt, OrderStatus status, List<OrderItemResponse> items, String paymentMethod) {
         this.id = id;
         this.total = total;
         this.createdAt = createdAt;
         this.status = status;
         this.items = items;
+        this.paymentMethod = paymentMethod;
     }
 
     public Long getId() {
@@ -59,5 +61,13 @@ public class OrderResponse {
 
     public void setItems(List<OrderItemResponse> items) {
         this.items = items;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }

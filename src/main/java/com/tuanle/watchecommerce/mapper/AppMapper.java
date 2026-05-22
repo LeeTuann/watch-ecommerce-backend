@@ -108,7 +108,8 @@ public class AppMapper {
                 order.getTotal(),
                 order.getCreatedAt(),
                 order.getStatus(),
-                items
+                items,
+                order.getPaymentMethod()
         );
     }
 }

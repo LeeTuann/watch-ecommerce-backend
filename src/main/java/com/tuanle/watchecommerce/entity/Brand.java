@@ -14,6 +14,7 @@ public class Brand {
     private String name;
 
     @OneToMany(mappedBy = "brand")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Product> products;
 
     public Long getId() {

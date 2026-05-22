@@ -22,6 +22,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    private String paymentMethod;
+
     public Long getId() {
         return id;
     }
@@ -65,4 +67,11 @@ public class Order {
         this.items = items;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }
